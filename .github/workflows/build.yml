@@ -3,13 +3,11 @@ name: Build Android APK
 on:
   push:
     branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
   build-android:
-    # 👇 ВОТ ЗДЕСЬ ИСПРАВЛЕНИЕ: используем Ubuntu 22.04 вместо ubuntu-latest
+    # Используем Ubuntu 22.04, чтобы избежать ошибки с libtinfo5
     runs-on: ubuntu-22.04
 
     steps:
@@ -28,8 +26,7 @@ jobs:
             git zip unzip openjdk-17-jdk \
             autoconf libtool pkg-config \
             zlib1g-dev libncurses5-dev libncursesw5-dev \
-            libtinfo5 cmake libffi-dev libssl-dev \
-            automake
+            libtinfo5 cmake libffi-dev libssl-dev automake
 
       - name: Install Buildozer and Cython
         run: |
@@ -52,10 +49,11 @@ jobs:
           restore-keys: |
             buildozer-
 
+      # Сборка. Команда 'yes |' автоматически отвечает 'y' на все запросы лицензий
       - name: Build with Buildozer
         run: |
           export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-          buildozer -v android debug
+          yes | buildozer -v android debug
         env:
           BUILDOZER_WARN_ON_ROOT: 0
 
