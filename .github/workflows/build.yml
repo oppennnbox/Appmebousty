@@ -7,7 +7,6 @@ on:
 
 jobs:
   build-android:
-    # Используем Ubuntu 22.04, чтобы избежать ошибки с libtinfo5
     runs-on: ubuntu-22.04
 
     steps:
@@ -49,10 +48,12 @@ jobs:
           restore-keys: |
             buildozer-
 
-      # Сборка. Команда 'yes |' автоматически отвечает 'y' на все запросы лицензий
+      # Сборка с дополнительными переменными окружения
       - name: Build with Buildozer
         run: |
           export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+          export APP_ANDROID_ACCEPT_SDK_LICENSE=1
+          export BUILDOZER_WARN_ON_ROOT=0
           yes | buildozer -v android debug
         env:
           BUILDOZER_WARN_ON_ROOT: 0
